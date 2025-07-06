@@ -48,3 +48,5 @@ export const initDB = () => {
         console.error('Failed creating database: ', error);
     }
 }
+
+export default db;
