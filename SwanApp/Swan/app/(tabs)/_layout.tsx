@@ -1,5 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
+import { useEffect } from 'react';
+import { initDB } from '@/lib/db';
+
+useEffect(() => {
+  initDB();
+}, []);
 
 export default function TabLayout() {
   return (
