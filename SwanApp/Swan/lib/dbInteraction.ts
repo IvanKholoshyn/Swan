@@ -22,3 +22,9 @@ export const addExercise = (exercise_name: string, muscle_group_id: number | nul
         `INSERT INTO exercises (exercise_name, muscle_group_id) VALUES (?, ?)`, [exercise_name, muscle_group_id]
     );
 }
+
+export const getAllExercises = (): { exercise_id: number; exercise_name: string }[] => {
+    return db.getAllSync<{ exercise_id: number; exercise_name: string }>(
+        `SELECT exercise_id, exercise_name FROM exercises`
+    );
+}
