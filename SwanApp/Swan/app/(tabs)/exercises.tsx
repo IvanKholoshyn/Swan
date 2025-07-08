@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput, Animated, UIManager, LayoutAnimation,  Platform } from 'react-native';
-import { addExercise, getAllExercises } from '@/lib/dbInteraction';
+import { addExercise, getAllExercises, deleteExercise } from '@/lib/dbInteraction';
 
 export default function ExercisesScreen() {
     const [exercises, setExercises] = useState<
@@ -24,6 +24,18 @@ export default function ExercisesScreen() {
             alert('Error');
         }
     };
+
+    const handleDeleteExercise = async () => {
+        try {
+            await deleteExercise(selectedItem);
+            alert('Deleted exercise');
+            setSelectedItem(0);
+            setExercises(getAllExercises());
+        } catch (error) {
+            console.error('Error: ',  error);
+            alert('Error');
+        }
+    }
 
     useEffect(() => {
         const data = getAllExercises();
@@ -91,6 +103,7 @@ export default function ExercisesScreen() {
                                     </Text>
                                     <TouchableOpacity
                                         style={styles.deleteButton}
+                                        onPress = {handleDeleteExercise}
                                     >
                                         <Text style={styles.text}>Delete</Text>
                                     </TouchableOpacity>

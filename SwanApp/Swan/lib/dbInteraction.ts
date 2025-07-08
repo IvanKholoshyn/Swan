@@ -28,3 +28,9 @@ export const getAllExercises = (): { exercise_id: number; exercise_name: string 
         `SELECT exercise_id, exercise_name FROM exercises`
     );
 }
+
+export const deleteExercise = (exercise_id: number) => {
+    db.runSync(
+        `DELETE FROM exercises WHERE exercise_id=?;`,[exercise_id]
+    );
+}
