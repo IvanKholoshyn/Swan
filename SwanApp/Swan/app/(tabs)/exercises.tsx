@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Button, StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput, Animated, UIManager, LayoutAnimation,  Platform } from 'react-native';
 import { addExercise, getAllExercises } from '@/lib/dbInteraction';
 
 export default function ExercisesScreen() {
@@ -8,10 +8,13 @@ export default function ExercisesScreen() {
     >([]);
     const [showInput, setShowInput  ] = useState(false);
     const [exerciseName, setExerciseName ] = useState('');
+
+    const inputOpacity = useRef(new Animated.Value(0)).current;
     
     const handleAddExercise = async () => {
         try {
-            addExercise(exerciseName);
+            if (exerciseName == '') return;
+            await addExercise(exerciseName);
             alert('Added exercise');
             setShowInput(false);
             setExercises(getAllExercises());
@@ -24,27 +27,50 @@ export default function ExercisesScreen() {
     useEffect(() => {
         const data = getAllExercises();
         setExercises(data);
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        if (showInput) {
+            Animated.parallel([
+                Animated.timing(inputOpacity, {
+                    toValue: 1,
+                    duration: 300,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        } else{
+            Animated.parallel([
+                Animated.timing(inputOpacity, {
+                    toValue: 0,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        }
+    }, [showInput]); 
 
     return (
         <View style={styles.container}>
             <Text style={styles.text}>Exercises Tab</Text>
-            <TouchableOpacity style={styles.button} onPress={() =>  setShowInput(!showInput)}>
+            <TouchableOpacity style={styles.button} onPress={() => setShowInput(!showInput)}>
                 <Text style={styles.text}>Add exercise</Text>
             </TouchableOpacity>
             {showInput && (
-                <View style={styles.inputBlock}>
+                <Animated.View 
+                    style={[styles.inputBlock,
+                    { opacity: inputOpacity }]}
+                >
                     <TextInput
                         style={styles.input}
                         placeholder='Input name'
-                        placeholderTextColor='#aaa'
+                        placeholderTextColor='#393E46'
                         value={exerciseName}
                         onChangeText={setExerciseName}
                     />
                     <TouchableOpacity style={styles.confirmButton} onPress={handleAddExercise}>
                         <Text style={styles.text}>Submit</Text>
                     </TouchableOpacity>
-                </View>
+                </Animated.View>
             )}
             <FlatList
                 data={exercises}
@@ -101,20 +127,23 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
     },
     inputBlock: {
-        //marginTop: 12,
+        padding: 12,
+        backgroundColor: '#393E46',
+        marginBottom: 12,
+        borderRadius: 10,
     },
     input: {
-        backgroundColor: '#393E46',
-        color: 'white',
+        backgroundColor: '#948979',
+        color: '#222831',
         padding: 12,
         borderRadius: 8,
         fontSize: 16,
     },
     confirmButton: {
-        backgroundColor: '#393e46',
+        backgroundColor: '#DFD0B8',
         padding: 12,
         borderRadius: 10,
         alignItems: 'center',
-        marginVertical: 12,
+        marginTop: 12,
     },
 });
