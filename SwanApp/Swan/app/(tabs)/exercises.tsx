@@ -8,6 +8,7 @@ export default function ExercisesScreen() {
     >([]);
     const [showInput, setShowInput  ] = useState(false);
     const [exerciseName, setExerciseName ] = useState('');
+    const [selectedItem, setSelectedItem ] = useState(0);
 
     const inputOpacity = useRef(new Animated.Value(0)).current;
     
@@ -77,12 +78,34 @@ export default function ExercisesScreen() {
                 keyExtractor={(item) => item.exercise_id.toString()}
                 renderItem={({ item }) => (
                     <View style={styles.card}>
-                        <Text style={styles.textId}>
-                            Id: {item.exercise_id}
-                        </Text>
-                        <Text style={styles.text}>
-                            {item.exercise_name}
-                        </Text>
+                        {selectedItem === item.exercise_id ? 
+                            (
+                                <TouchableOpacity
+                                    onPress={() => setSelectedItem(0)}
+                                >
+                                    <Text style={styles.text}>
+                                        {item.exercise_name}
+                                    </Text>
+                                    <Text style={styles.textId}>
+                                        Id: {item.exercise_id}
+                                    </Text>
+                                    <TouchableOpacity
+                                        style={styles.deleteButton}
+                                    >
+                                        <Text style={styles.text}>Delete</Text>
+                                    </TouchableOpacity>
+                                </TouchableOpacity>
+                            ) :
+                            (
+                                <TouchableOpacity
+                                    onPress={() => setSelectedItem(item.exercise_id)}
+                                >
+                                    <Text style={styles.text}>
+                                        {item.exercise_name}
+                                    </Text>
+                                </TouchableOpacity>
+                            )
+                        }
                     </View>
                 )}
             />
@@ -141,6 +164,13 @@ const styles = StyleSheet.create({
     },
     confirmButton: {
         backgroundColor: '#DFD0B8',
+        padding: 12,
+        borderRadius: 10,
+        alignItems: 'center',
+        marginTop: 12,
+    },
+    deleteButton: {
+        backgroundColor: 'red',
         padding: 12,
         borderRadius: 10,
         alignItems: 'center',
